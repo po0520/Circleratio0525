@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>劇場版《間諜家家酒：幾何密碼防衛戰》</title>
+<style>
+:root {
+    --bg-dark: #090d16;
+    --card-bg: rgba(17, 24, 39, 0.85);
+    --neon-blue: #00f2fe;
+    --neon-green: #4facfe;
+    --accent-gold: #facc15;
+    --correct-green: #10b981;
+    --wrong-red: #ef4444;
+    --text-main: #f3f4f6;
+}
+
+body {
+    font-family: "Helvetica Neue", Arial, "Microsoft JhengHei", sans-serif;
+    background: radial-gradient(circle at center, #1e1b4b 0%, #090d16 100%);
+    color: var(--text-main);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    width: 100%;
+    max-width: 850px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.card {
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 35px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 242, 254, 0.05);
+    animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+h1 {
+    font-size: 2.4rem;
+    text-align: center;
+    margin-bottom: 10px;
+    background: linear-gradient(135deg, var(--neon-blue), var(--accent-gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
+
+h2 {
+    font-size: 1.5rem;
+    color: var(--neon-blue);
+    margin-top: 0;
+    border-left: 5px solid var(--accent-gold);
+    padding-left: 12px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #9ca3af;
+    margin-bottom: 30px;
+    font-size: 1.1rem;
+}
+
+.story-box {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 25px;
+    position: relative;
+}
+
+.character-badge {
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.story-text {
+    margin: 8px 0 0 0;
+    line-height: 1.7;
+    color: #e5e7eb;
+}
+
+.guide-box {
+    background: rgba(251, 191, 36, 0.08);
+    border: 1px dashed rgba(251, 191, 36, 0.3);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 25px;
+    font-size: 0.95rem;
+    color: #fde047;
+}
+
+/* 互動區域 */
+.interactive-zone {
+    margin: 25px 0;
+}
+
+.option-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+
+.option-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 1.1rem;
+}
+
+.option-card:hover {
+    background: rgba(0, 242, 254, 0.08);
+    border-color: var(--neon-blue);
+    transform: translateX(5px);
+}
+
+.option-card.selected {
+    background: rgba(251, 191, 36, 0.15);
+    border-color: var(--accent-gold);
+}
+
+/* 排序題型樣式 */
+.sort-item {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 12px 20px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sort-btn-group button {
+    background: #1f2937;
+    color: white;
+    border: 1px solid #374151;
+    padding: 6px 12px;
+    margin-left: 5px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.sort-btn-group button:hover { background: #374151; }
+
+/* 配對題型樣式 */
+.match-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.match-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.match-item {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 14px;
+    border-radius: 12px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    font-size: 0.95rem;
+}
+
+.match-item.active {
+    background: rgba(0, 242, 254, 0.2);
+    border-color: var(--neon-blue);
+    box-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+}
+
+.match-item.paired {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: var(--correct-green);
+    color: #a7f3d0;
+    cursor: not-allowed;
+}
+
+/* 填充輸入框 */
+input[type="text"] {
+    background: rgba(15, 23, 42, 0.6);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    padding: 14px;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 12px;
+    color: white;
+    font-size: 1.3rem;
+    text-align: center;
+    transition: all 0.3s;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    border-color: var(--neon-blue);
+    box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+}
+
+/* 按鈕 */
+.btn-submit {
+    background: linear-gradient(135deg, #00f2fe, #4facfe);
+    color: #090d16;
+    border: none;
+    padding: 15px 30px;
+    width: 100%;
+    border-radius: 14px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: all 0.2s;
+    box-shadow: 0 4px 15px rgba(0, 242, 254, 0.2);
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 242, 254, 0.4);
+}
+
+.status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+    color: #9ca3af;
+}
+
+.progress-container {
+    height: 8px;
+    background: #1f2937;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 25px;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(to right, var(--neon-blue), var(--neon-green));
+    transition: width 0.4s ease;
+}
+
+.retry-badge {
+    background: rgba(30, 41, 59, 0.8);
+    color: #f87171;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 4px 12px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+#feedback, #bossFeedback {
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-top: 20px;
+    min-height: 30px;
+}
+
+.correct { color: var(--correct-green); text-shadow: 0 0 10px rgba(16,185,129,0.3); }
+.wrong { color: var(--wrong-red); text-shadow: 0 0 10px rgba(239,68,68,0.3); }
+
+.integration-result {
+    background: rgba(79, 172, 254, 0.08);
+    border: 1px solid rgba(79, 172, 254, 0.25);
+    border-radius: 14px;
+    padding: 14px;
+    margin-top: 16px;
+    line-height: 1.6;
+    text-align: left;
+}
+.multi-question {
+    background: rgba(255,255,255,0.035);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 14px;
+}
+.multi-question .option-card {
+    font-size: 1rem;
+    padding: 12px;
+}
+
+.hidden { display: none !important; }
+
+/* 結算報告樣式 */
+.rank-title {
+    font-size: 2.2rem;
+    color: var(--accent-gold);
+    text-align: center;
+    font-weight: bold;
+    margin: 20px 0;
+    text-shadow: 0 0 15px rgba(251, 191, 36, 0.4);
+}
+
+.eval-box {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 16px;
+    padding: 20px;
+    margin: 20px 0;
+    border-left: 4px solid var(--neon-blue);
+}
+
+.hub-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 20px;
+}
+
+@media(max-width: 600px) {
+    .hub-grid { grid-template-columns: repeat(2, 1fr); }
+    .match-container { grid-template-columns: 1fr; }
+}
+
+.btn-hub {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: white;
+    padding: 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+
+.btn-hub:hover {
+    border-color: var(--neon-blue);
+    background: rgba(0,242,254,0.1);
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="card" id="startScreen">
+        <h1>🕵️ 幾何密碼防衛戰</h1>
+        <p class="subtitle">劇場版特別企劃：皇家研究所的危機</p>
+        
+        <div class="story-box">
+            <div class="character-badge" style="background:#dc2626;">MISSION REPORT</div>
+            <p class="story-text">
+                恐怖組織佔領了「雪白國度」的皇家幾何研究所，試圖利用遠古的「圓周防衛矩陣」啟動毀滅飛彈！<br>
+                WISE 派遣佛傑一家潛入。你必須運用極致的<b>「圓周率意義」</b>與<b>「扇形周長公式」</b>，協助黃昏、約兒與安妮亞逐一破解 9 個機密核心檔案，其中第 9 關會整合前 8 關內容，最後再迎接魔王生死鬥！
+            </p>
+        </div>
+
+        <div class="guide-box">
+            <b>🎮 闖關特務規則：</b><br>
+            1. 包含 9 大核心關卡，題型涵蓋填空、配對、排序、選擇與整合應用題。<br>
+            2. 答錯將驚動敵軍，並<b>強制進入原廠補救特訓</b>。<br>
+            3. <span style="color:var(--accent-gold); font-weight:bold;">【全新防禦升級】每一個關卡都擁有獨立且最多 3 次的補訓機會！</span>不會跨關卡共用。<br>
+            4. 第 9 關會一次出 5 題整合應用題，並計算本關 20 分制得分。<br>
+            5. 通過主線後，將解鎖<b>「終極魔王關」</b>（5 題四選一綜合死鬥）。<br>
+            5. 最終依據你的表現，給予殘酷的特務排行榜評級與情緒評價！
+        </div>
+
+        <button class="btn-submit" onclick="startGame()">進入主線任務</button>
+        
+        <div style="margin-top: 30px; text-align: center; color: #9ca3af; font-size: 0.9rem;">
+            —— 自由特務選關模式 ——
+            <div class="hub-grid" id="startHubGrid"></div>
+        </div>
+    </div>
+
+    <div class="card hidden" id="gameScreen">
+        <div class="status-bar">
+            <span id="displayLevelNum">檔案編號：1/8</span>
+            <span class="retry-badge" id="retryIndicator">狀態：主線潛入中</span>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="pBar"></div>
+        </div>
+
+        <h2 id="lvlTitle">關卡載入中...</h2>
+
+        <div class="story-box">
+            <div class="character-badge" id="lvlChar">角色</div>
+            <p class="story-text" id="lvlStory">情境故事載入中...</p>
+        </div>
+
+        <div class="guide-box" id="lvlGuide">引導提示</div>
+
+        <div class="interactive-zone" id="questionZone">
+            </div>
+
+        <button class="btn-submit" id="submitBtn" onclick="processAnswer()">驗證並上傳情報</button>
+        <div id="feedback"></div>
+    </div>
+
+    <div class="card hidden" id="bossScreen">
+        <h1>🔥 終極魔王挑戰賽</h1>
+        <p class="subtitle">德斯蒙德的防禦矩陣全載開火！</p>
+        
+        <div class="status-bar">
+            <span id="bossProgressText">魔王題組：1 / 5</span>
+            <span style="color:#facc15; font-weight:bold;">⚠️ 隨機綜合死鬥</span>
+        </div>
+
+        <div class="story-box">
+            <div class="character-badge" style="background:#b91c1c;">BOSS COMING</div>
+            <p class="story-text">
+                你成功破解了所有核心！但德斯蒙德現身並全面啟動了防禦系統。你必須在不看提示的情況下，連續答對 5 道「四選一精準選擇題」，給予反應爐致命一擊！
+            </p>
+        </div>
+
+        <div class="interactive-zone" id="bossQuestionZone">
+            </div>
+
+        <button class="btn-submit" id="bossSubmitBtn" onclick="processBossAnswer()">同步擊碎矩陣</button>
+        <div id="bossFeedback"></div>
+    </div>
+
+    <div class="card hidden" id="endScreen">
+        <h1>🎉 任務圓滿落幕！</h1>
+        <p class="subtitle">情報分析報告與綜合測評</p>
+
+        <div style="text-align: center; font-size: 1.3rem;">
+            您的特務總積分：<span id="finalScoreText" style="color:#00f2fe; font-size:2rem; font-weight:bold;">100</span> 分
+        </div>
+
+        <div class="rank-title" id="finalRank">計算中...</div>
+
+        <div class="eval-box">
+            <b style="color:var(--neon-blue);">🎭 團隊核心成員情緒評語：</b>
+            <p id="evalContent" style="margin: 10px 0 0 0; line-height: 1.6; color: #d1d5db;"></p>
+        </div>
+
+        <button class="btn-submit" onclick="location.reload()">重新接受任務</button>
+    </div>
+
+</div>
+
+<script>
+/* 
+  學習扶助版核心：
+  1. 每一關先提供「定義或計算方法」引導。
+  2. 主線答錯：立即回饋正確觀念或算式，並進入補訓。
+  3. 補訓答錯：立即回饋計算方法，接著更換數字給下一題。
+  4. 每關補訓最多 3 次；用完仍未通過會進入下一關，最後在成績報告列為需加強。
+  5. 第 9 關整合前 8 關內容，出 5 題應用問題並計算本關分數。
+  6. 最後依主線、補訓、第 9 關與魔王關表現計算成績並給學習建議。
+*/
+
+const levelsData = [
+    {
+        title: "第一關：解密齒輪相似性",
+        character: "🕵️ 黃昏 (Loid Forger)",
+        story: "黃昏潛入中央控制室，發現兩枚不同尺寸的古董密碼齒輪：甲輪直徑10公分，乙輪直徑20公分。主機跳出安全提問：『哪一個齒輪的圓周率比值較大？』",
+        method: "📘 定義引導：圓周率 = 圓周長 ÷ 直徑長。所有圓不論大小，圓周長和直徑長的比值都固定，約為 3.14。",
+        type: "choice",
+        question: "請選出正確的圓周率大小關係：",
+        options: ["甲輪的圓周率比較大", "乙輪的圓周率比較大", "兩個齒輪的圓周率一樣大", "無法確定"],
+        answer: 2,
+        explain: "圓周率看的是「圓周長 ÷ 直徑長」的固定比值，不是看圓的大小。直徑變大時，圓周長也會等比例變大，所以比值仍約是 3.14。",
+        remedials: [
+            {type:"choice", question:"補訓題 1：直徑 40 公分的圓與直徑 8 公分的圓相比，哪一個圓周率比較大？", options:["40 公分的比較大","8 公分的比較大","一樣大","無法比較"], answer:2, explain:"圓周率是固定比值，任何圓的圓周率都一樣，約為 3.14。"},
+            {type:"choice", question:"補訓題 2：一個大圓直徑是小圓的 3 倍，大圓的圓周率會變成小圓的 3 倍嗎？", options:["會","不會，圓周率仍一樣","會變成 6.28","只在大圓成立"], answer:1, explain:"直徑變 3 倍，圓周長也變 3 倍，所以「圓周長÷直徑」的比值不變。"},
+            {type:"choice", question:"補訓題 3：圓周長 31.4、公徑 10 的圓，圓周率是多少？", options:["1.57","3.14","10","31.4"], answer:1, explain:"圓周率 = 圓周長 ÷ 直徑 = 31.4 ÷ 10 = 3.14。"}
+        ]
+    },
+    {
+        title: "第二關：發射口周長鎖定",
+        character: "🎀 安妮亞 (Anya Forger)",
+        story: "安妮亞偷聽到敵方工程師的秘密：『一號飛彈發射口是圓形，直徑正好是 6 公分。』只要算出圓周長，就能用黏黏球堵住它！",
+        method: "📘 計算方法：圓周長 = 直徑 × 3.14。已知直徑 6 公分，所以列式：6 × 3.14。",
+        type: "input",
+        question: "直徑 6 公分的圓，其圓周長是多少公分？（請輸入數字）",
+        answer: 18.84,
+        explain: "圓周長 = 直徑 × 3.14 = 6 × 3.14 = 18.84，所以答案是 18.84 公分。",
+        remedials: [
+            {type:"input", question:"補訓題 1：直徑 8 公分的圓，圓周長是多少公分？", answer:25.12, explain:"圓周長 = 直徑 × 3.14 = 8 × 3.14 = 25.12。"},
+            {type:"input", question:"補訓題 2：直徑 12 公分的圓，圓周長是多少公分？", answer:37.68, explain:"圓周長 = 直徑 × 3.14 = 12 × 3.14 = 37.68。"},
+            {type:"input", question:"補訓題 3：直徑 40 公分的圓，圓周長是多少公分？", answer:125.6, explain:"圓周長 = 直徑 × 3.14 = 40 × 3.14 = 125.6。"}
+        ]
+    },
+    {
+        title: "第三關：逆向追蹤源程序",
+        character: "🕵️ 黃昏 (Loid Forger)",
+        story: "警報響起！外部接收到一段圓周長訊號，長度為 31.4 公分。黃昏必須反推發射源的半徑，才能呼叫支援。",
+        method: "📘 計算方法：已知圓周長求直徑，用「圓周長 ÷ 3.14」；再用「直徑 ÷ 2」求半徑。",
+        type: "sort",
+        question: "請將解碼步驟由上至下正確排序：",
+        items: [
+            "步驟 A：31.4 ÷ 3.14，先求直徑",
+            "步驟 B：算出直徑是 10 公分",
+            "步驟 C：10 ÷ 2，求半徑",
+            "步驟 D：半徑是 5 公分"
+        ],
+        answer: [0, 1, 2, 3],
+        explain: "逆推順序是：圓周長 ÷ 3.14 = 直徑；直徑 ÷ 2 = 半徑。因此 31.4 ÷ 3.14 = 10，10 ÷ 2 = 5。",
+        remedials: [
+            {type:"input", question:"補訓題 1：已知圓周長 62.8 公分，半徑是多少公分？", answer:10, explain:"先求直徑：62.8 ÷ 3.14 = 20；再求半徑：20 ÷ 2 = 10。"},
+            {type:"input", question:"補訓題 2：已知圓周長 94.2 公分，半徑是多少公分？", answer:15, explain:"先求直徑：94.2 ÷ 3.14 = 30；再求半徑：30 ÷ 2 = 15。"},
+            {type:"input", question:"補訓題 3：已知圓周長 125.6 公分，半徑是多少公分？", answer:20, explain:"先求直徑：125.6 ÷ 3.14 = 40；再求半徑：40 ÷ 2 = 20。"}
+        ]
+    },
+    {
+        title: "第四關：彭德的雷射預知",
+        character: "🐕 彭德 (Bond Forger)",
+        story: "彭德看到一秒後的未來！約兒前方即將亮起一道半徑 15 公分的圓形粒子防禦網。必須立刻計算出雷射圓圈的長度！",
+        method: "📘 計算方法：已知半徑，先求直徑。直徑 = 半徑 × 2；圓周長 = 直徑 × 3.14。",
+        type: "input",
+        question: "半徑 15 公分的圓，其圓周長是多少公分？",
+        answer: 94.2,
+        explain: "先求直徑：15 × 2 = 30；再算圓周長：30 × 3.14 = 94.2，所以答案是 94.2 公分。",
+        remedials: [
+            {type:"input", question:"補訓題 1：半徑 7 公分的圓，圓周長是多少公分？", answer:43.96, explain:"直徑 = 7 × 2 = 14；圓周長 = 14 × 3.14 = 43.96。"},
+            {type:"input", question:"補訓題 2：半徑 16 公分的圓，圓周長是多少公分？", answer:100.48, explain:"直徑 = 16 × 2 = 32；圓周長 = 32 × 3.14 = 100.48。"},
+            {type:"input", question:"補訓題 3：半徑 25 公分的圓，圓周長是多少公分？", answer:157, explain:"直徑 = 25 × 2 = 50；圓周長 = 50 × 3.14 = 157。"}
+        ]
+    },
+    {
+        title: "第五關：扇形廊道密碼鎖",
+        character: "🎀 安妮亞 (Anya Forger)",
+        story: "佛傑一家來到扇形生化廊道。大門密碼鎖需要安妮亞將扇形幾何名詞進行精準配對！",
+        method: "📘 定義引導：扇形是由兩條半徑和一段弧圍成的圖形；弧是部分圓周；圓心角是兩條半徑的夾角；扇形周長 = 兩條半徑 + 弧長。",
+        type: "match",
+        question: "請配對左側名詞與右側定義（兩邊各點擊一項進行配對）：",
+        left: ["扇形", "弧", "圓心角", "扇形周長"],
+        right: ["兩條半徑加上弧長", "兩條半徑間的夾角", "部分圓周的名稱", "兩半徑和部分圓周圍成的圖形"],
+        pairs: {0:3, 1:2, 2:1, 3:0},
+        explain: "正確配對：扇形＝兩半徑和部分圓周圍成；弧＝部分圓周；圓心角＝兩半徑間的夾角；扇形周長＝2 條半徑 + 弧長。",
+        remedials: [
+            {type:"input", question:"補訓題 1：扇形周長 = 半徑 ×（　）+ 弧長，括號填多少？", answer:2, explain:"扇形周長包含 2 條半徑，所以公式是半徑 × 2 + 弧長。"},
+            {type:"choice", question:"補訓題 2：『弧』指的是哪一個？", options:["整個圓面","部分圓周","兩條半徑","圓心的點"], answer:1, explain:"弧是圓周的一部分，不是整個圓面，也不是半徑。"},
+            {type:"choice", question:"補訓題 3：扇形周長一定要加上什麼？", options:["只有弧長","只有 1 條半徑","2 條半徑和弧長","面積"], answer:2, explain:"扇形周長是外圍一圈，包含 2 條半徑與 1 段弧長。"}
+        ]
+    },
+    {
+        title: "第六關：盲區刀刃軌跡",
+        character: "⚔️ 約兒 (Yor Forger)",
+        story: "走廊上有高速旋轉的扇形暗器。地圖標示圓形直徑是 36 公分，扇形圓心角是 20 度。約兒需要切斷最外圍的弧！",
+        method: "📘 計算方法：弧長 = 直徑 × 3.14 ×（圓心角 ÷ 360）。",
+        type: "input",
+        question: "直徑 36 公分的圓上，20度圓心角對應的弧長是多少公分？",
+        answer: 6.28,
+        explain: "弧長 = 36 × 3.14 ×（20 ÷ 360）= 113.04 × 1/18 = 6.28，所以答案是 6.28 公分。",
+        remedials: [
+            {type:"input", question:"補訓題 1：直徑 18 公分、圓心角 60 度的扇形，弧長是多少公分？", answer:9.42, explain:"弧長 = 18 × 3.14 ×（60 ÷ 360）= 56.52 × 1/6 = 9.42。"},
+            {type:"input", question:"補訓題 2：直徑 90 公分、圓心角 40 度的扇形，弧長是多少公分？", answer:31.4, explain:"弧長 = 90 × 3.14 ×（40 ÷ 360）= 282.6 × 1/9 = 31.4。"},
+            {type:"input", question:"補訓題 3：直徑 24 公分、圓心角 90 度的扇形，弧長是多少公分？", answer:18.84, explain:"弧長 = 24 × 3.14 ×（90 ÷ 360）= 75.36 × 1/4 = 18.84。"}
+        ]
+    },
+    {
+        title: "第七關：紅外線結界突圍",
+        character: "⚔️ 約兒 (Yor Forger)",
+        story: "前方出現一道 1/6 圓的紅外線結界！警報紀錄顯示該源頭圓形直徑為 12 公分。約兒必須知道整道扇形結界的總周長。",
+        method: "📘 計算方法：扇形周長 = 2 條半徑 + 弧長。直徑 12，所以半徑 6；1/6 圓弧長 = 12 × 3.14 × 1/6。",
+        type: "input",
+        question: "直徑 12 公分的 1/6 圓扇形，其周長是多少公分？",
+        answer: 18.28,
+        explain: "半徑 = 12 ÷ 2 = 6，兩條半徑是 12；弧長 = 12 × 3.14 × 1/6 = 6.28；扇形周長 = 12 + 6.28 = 18.28。",
+        remedials: [
+            {type:"input", question:"補訓題 1：直徑 18 公分的 1/3 圓扇形，周長是多少公分？", answer:36.84, explain:"半徑 = 9，兩條半徑 = 18；弧長 = 18 × 3.14 × 1/3 = 18.84；周長 = 18 + 18.84 = 36.84。"},
+            {type:"input", question:"補訓題 2：直徑 20 公分的 1/4 圓扇形，周長是多少公分？", answer:35.7, explain:"半徑 = 10，兩條半徑 = 20；弧長 = 20 × 3.14 × 1/4 = 15.7；周長 = 20 + 15.7 = 35.7。"},
+            {type:"input", question:"補訓題 3：直徑 80 公分的 3/8 圓，弧長是多少公分？", answer:94.2, explain:"題目只問弧長：80 × 3.14 × 3/8 = 251.2 × 3/8 = 94.2。"}
+        ]
+    },
+    {
+        title: "第八關：反應爐核心拆彈",
+        character: "🕵️ 黃昏 (Loid Forger)",
+        story: "飛彈核心主電路板是一個巨大扇形。數據顯示其圓形直徑 72 公分，圓心角 120 度。黃昏必須輸入扇形總周長！",
+        method: "📘 計算方法：先算弧長 = 直徑 × 3.14 ×（圓心角 ÷ 360），再加上 2 條半徑。",
+        type: "input",
+        question: "直徑 72 公分、圓心角 120 度的扇形，其總周長是多少公分？",
+        answer: 147.36,
+        explain: "半徑 = 72 ÷ 2 = 36，兩條半徑 = 72；弧長 = 72 × 3.14 ×（120 ÷ 360）= 226.08 × 1/3 = 75.36；總周長 = 72 + 75.36 = 147.36。",
+        remedials: [
+            {type:"input", question:"補訓題 1：直徑 60 公分、圓心角 90 度的扇形，總周長是多少公分？", answer:107.1, explain:"兩條半徑 = 60；弧長 = 60 × 3.14 × 90/360 = 47.1；總周長 = 60 + 47.1 = 107.1。"},
+            {type:"input", question:"補訓題 2：直徑 90 公分、圓心角 40 度的扇形，總周長是多少公分？", answer:121.4, explain:"兩條半徑 = 90；弧長 = 90 × 3.14 × 40/360 = 31.4；總周長 = 90 + 31.4 = 121.4。"},
+            {type:"input", question:"補訓題 3：直徑 30 公分、圓心角 180 度的扇形，總周長是多少公分？", answer:77.1, explain:"兩條半徑 = 30；弧長 = 30 × 3.14 × 180/360 = 47.1；總周長 = 30 + 47.1 = 77.1。"}
+        ]
+
+    },
+    {
+        title: "第九關：整合應用防衛總演練",
+        character: "👨‍👩‍👧 佛傑一家聯合作戰",
+        story: "最後進入皇家研究所的總控室，系統把前 8 關的圓周率、圓周長、半徑逆推、弧長與扇形周長全部整合成 5 題應用問題。請完成總演練，系統會依答對題數計算本關分數。",
+        method: "📘 整合引導：先判斷題目問的是什麼。① 圓周率 = 圓周長 ÷ 直徑；② 圓周長 = 直徑 × 3.14；③ 半徑 = 直徑 ÷ 2；④ 弧長 = 直徑 × 3.14 ×（圓心角 ÷ 360）；⑤ 扇形周長 = 2 條半徑 + 弧長。",
+        type: "multi",
+        question: "請完成 5 題整合應用問題。本關每題 4 分，共 20 分，答錯會立即顯示計算方法並納入總成績。",
+        explain: "整合題重點是先辨認題型，再列式計算：圓周長、半徑、弧長與扇形周長不能混在一起。",
+        questions: [
+            {kind:"input", question:"1. 皇家雷達圓盤直徑 14 公分，它的圓周長是多少公分？", answer:43.96, explain:"圓周長 = 直徑 × 3.14 = 14 × 3.14 = 43.96。"},
+            {kind:"input", question:"2. 一個圓形密碼環的圓周長是 75.36 公分，半徑是多少公分？", answer:12, explain:"先求直徑：75.36 ÷ 3.14 = 24；再求半徑：24 ÷ 2 = 12。"},
+            {kind:"input", question:"3. 直徑 48 公分、圓心角 45 度的扇形弧長是多少公分？", answer:18.84, explain:"弧長 = 48 × 3.14 ×（45 ÷ 360）= 150.72 × 1/8 = 18.84。"},
+            {kind:"input", question:"4. 直徑 32 公分的 1/4 圓扇形，完整周長是多少公分？", answer:57.12, explain:"半徑 = 32 ÷ 2 = 16，兩條半徑 = 32；弧長 = 32 × 3.14 × 1/4 = 25.12；扇形周長 = 32 + 25.12 = 57.12。"},
+            {kind:"choice", question:"5. 計算扇形完整周長時，哪一個步驟最容易被漏掉？", options:["乘以 3.14","加上 2 條半徑","把直徑除以 2","比較圓的大小"], answer:1, explain:"扇形完整周長不是只有弧長，還要加上左右兩條半徑。"}
+        ]
+    }
+
+];
+
+const bossQuestions = [
+    {
+        question: "所有的圓不論大小如何，其「圓周長 ÷ 直徑長」所得到的比值（圓周率）都相等嗎？",
+        options: ["不相等，圓越大圓周率就越大", "相等，算出來都約為 3.14", "不相等，半徑小的圓周率比較大", "只有當半徑大於20公分時才相等"],
+        answer: 1,
+        explain: "圓周率是固定比值，所有圓的圓周長 ÷ 直徑都約為 3.14。"
+    },
+    {
+        question: "已知一個圓形控制台的直徑為 6 公分，求其圓周長的正確算式是什麼？",
+        options: ["6 × 3.14", "6 × 2 × 3.14", "6 ÷ 2 × 3.14", "6 × 6 × 3.14"],
+        answer: 0,
+        explain: "已知直徑，直接用圓周長 = 直徑 × 3.14，所以是 6 × 3.14。"
+    },
+    {
+        question: "若防禦力場顯示一個圓的總周長是 31.4 公分，那它的直徑應該是多少公分？",
+        options: ["5 公分", "10 公分", "15 公分", "20 公分"],
+        answer: 1,
+        explain: "直徑 = 圓周長 ÷ 3.14 = 31.4 ÷ 3.14 = 10。"
+    },
+    {
+        question: "在計算一個扇形的「完整周長」時，除了求出弧長外，還必須加上什麼？",
+        options: ["1 條半徑長", "2 條半徑長", "1 條直徑加 1 條半徑", "不需加任何東西，弧長即周長"],
+        answer: 1,
+        explain: "扇形完整周長是外圍一圈，所以要加上 2 條半徑長。"
+    },
+    {
+        question: "在直徑 36 公分的圓盤上，一個圓心角是 20 度的扇形，其弧長是多少公分？",
+        options: ["3.14 公分", "6.28 公分", "12.56 公分", "18.84 公分"],
+        answer: 1,
+        explain: "弧長 = 36 × 3.14 × 20/360 = 6.28。"
+    }
+];
+
+let currentIndex = 0;
+let score = 100;
+let isRemedialMode = false;
+let remedialStep = 0;
+let currentSortOrder = [];
+let selectedLeftIndex = null;
+let selectedRightIndex = null;
+let pairedMatches = {};
+let currentBossIndex = 0;
+let bossSelectedOption = null;
+let lastMultiResult = null;
+
+let stats = {
+    mainWrong: 0,
+    remedialWrong: 0,
+    bossWrong: 0,
+    remedialPassed: 0,
+    integrationCorrect: 0,
+    integrationTotal: 0,
+    integrationScore: 0,
+    exhaustedLevels: [],
+    wrongTopics: []
+};
+
+const topicNames = [
+    "圓周率定義",
+    "直徑求圓周長",
+    "圓周長逆推半徑",
+    "半徑求圓周長",
+    "扇形名詞與周長定義",
+    "弧長公式",
+    "分數圓扇形周長",
+    "圓心角扇形周長",
+    "整合應用題"
+];
+
+function init() {
+    const grid = document.getElementById('startHubGrid');
+    grid.innerHTML = '';
+    levelsData.forEach((lvl, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-hub';
+        btn.innerText = `檔案 ${idx + 1}`;
+        btn.onclick = () => {
+            resetStats();
+            score = 100 - (idx * 2);
+            currentIndex = idx;
+            goToGame(false);
+        };
+        grid.appendChild(btn);
+    });
+}
+
+function resetStats() {
+    stats = {
+        mainWrong: 0,
+        remedialWrong: 0,
+        bossWrong: 0,
+        remedialPassed: 0,
+        exhaustedLevels: [],
+        wrongTopics: []
+    };
+}
+
+function startGame() {
+    score = 100;
+    currentIndex = 0;
+    resetStats();
+    goToGame(false);
+}
+
+function goToGame(resetIndex = false) {
+    if (resetIndex) currentIndex = 0;
+    isRemedialMode = false;
+    remedialStep = 0;
+    document.getElementById('startScreen').classList.add('hidden');
+    document.getElementById('bossScreen').classList.add('hidden');
+    document.getElementById('endScreen').classList.add('hidden');
+    document.getElementById('gameScreen').classList.remove('hidden');
+    loadLevel();
+}
+
+function loadLevel() {
+    const data = levelsData[currentIndex];
+    document.getElementById('displayLevelNum').innerText = `檔案編號：${currentIndex + 1} / ${levelsData.length}`;
+    document.getElementById('feedback').innerHTML = '';
+    document.getElementById('submitBtn').disabled = false;
+
+    if (!isRemedialMode) {
+        document.getElementById('retryIndicator').innerText = `狀態：主線學習挑戰`;
+        document.getElementById('retryIndicator').style.color = '#9ca3af';
+        document.getElementById('lvlTitle').innerText = data.title;
+        document.getElementById('lvlChar').innerText = data.character;
+        document.getElementById('lvlStory').innerText = data.story;
+        document.getElementById('lvlGuide').innerHTML = data.method;
+        renderInteractiveZone(data.type, data.question, data);
+    } else {
+        const r = data.remedials[remedialStep];
+        document.getElementById('retryIndicator').innerText = `🚨 補訓進度：${remedialStep + 1} / 3`;
+        document.getElementById('retryIndicator').style.color = '#ef4444';
+        document.getElementById('lvlTitle').innerText = `🚨 第 ${currentIndex + 1} 關補救特訓`;
+        document.getElementById('lvlChar').innerText = "WISE 補訓系統";
+        document.getElementById('lvlStory').innerText = "剛剛的答案有誤，系統會先給你方法，再用改過數字的例題練習。答對即可返回主線並前進下一關。";
+        document.getElementById('lvlGuide').innerHTML = `💡 補訓提示：${data.explain}`;
+        renderInteractiveZone(r.type, r.question, r, true);
+    }
+
+    document.getElementById('pBar').style.width = `${((currentIndex) / levelsData.length) * 100}%`;
+}
+
+function renderInteractiveZone(type, questionText, data) {
+    const zone = document.getElementById('questionZone');
+    zone.innerHTML = `<p style="font-size:1.15rem; margin-bottom:15px; font-weight:bold;">${questionText}</p>`;
+
+    if (type === 'choice') {
+        const grid = document.createElement('div');
+        grid.className = 'option-grid';
+        data.options.forEach((opt, idx) => {
+            const card = document.createElement('div');
+            card.className = 'option-card';
+            card.innerText = opt;
+            card.id = `opt-${idx}`;
+            card.onclick = () => {
+                document.querySelectorAll('#questionZone .option-card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                card.dataset.val = idx;
+            };
+            grid.appendChild(card);
+        });
+        zone.appendChild(grid);
+    } else if (type === 'input') {
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.id = 'textAnswerField';
+        input.placeholder = '請輸入半形阿拉伯數字，如：18.84';
+        input.autocomplete = 'off';
+        zone.appendChild(input);
+        input.focus();
+        input.addEventListener('keypress', (e) => { if(e.key === 'Enter') processAnswer(); });
+    } else if (type === 'sort') {
+        currentSortOrder = [...data.items.keys()];
+        const sortContainer = document.createElement('div');
+        sortContainer.id = 'sortContainer';
+        renderSortItems(sortContainer, data.items);
+        zone.appendChild(sortContainer);
+    } else if (type === 'match') {
+        selectedLeftIndex = null;
+        selectedRightIndex = null;
+        pairedMatches = {};
+
+        const mContainer = document.createElement('div');
+        mContainer.className = 'match-container';
+
+        const leftCol = document.createElement('div');
+        leftCol.className = 'match-column';
+        data.left.forEach((lText, lIdx) => {
+            const div = document.createElement('div');
+            div.className = 'match-item';
+            div.innerText = lText;
+            div.id = `match-left-${lIdx}`;
+            div.onclick = () => selectMatchSide('left', lIdx);
+            leftCol.appendChild(div);
+        });
+
+        const rightCol = document.createElement('div');
+        rightCol.className = 'match-column';
+        data.right.forEach((rText, rIdx) => {
+            const div = document.createElement('div');
+            div.className = 'match-item';
+            div.innerText = rText;
+            div.id = `match-right-${rIdx}`;
+            div.onclick = () => selectMatchSide('right', rIdx);
+            rightCol.appendChild(div);
+        });
+
+        mContainer.appendChild(leftCol);
+        mContainer.appendChild(rightCol);
+        zone.appendChild(mContainer);
+    } else if (type === 'multi') {
+        lastMultiResult = null;
+        data.questions.forEach((q, qIdx) => {
+            const box = document.createElement('div');
+            box.className = 'multi-question';
+            box.innerHTML = `<p style="font-weight:bold; margin-top:0;">${q.question}</p>`;
+
+            if (q.kind === 'input') {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.id = `multi-input-${qIdx}`;
+                input.placeholder = '請輸入數字';
+                input.autocomplete = 'off';
+                box.appendChild(input);
+            } else if (q.kind === 'choice') {
+                const grid = document.createElement('div');
+                grid.className = 'option-grid';
+                q.options.forEach((opt, optIdx) => {
+                    const card = document.createElement('div');
+                    card.className = 'option-card multi-option';
+                    card.innerText = opt;
+                    card.dataset.q = qIdx;
+                    card.dataset.val = optIdx;
+                    card.onclick = () => {
+                        document.querySelectorAll(`.multi-option[data-q="${qIdx}"]`).forEach(c => c.classList.remove('selected'));
+                        card.classList.add('selected');
+                    };
+                    grid.appendChild(card);
+                });
+                box.appendChild(grid);
+            }
+            zone.appendChild(box);
+        });
+    }
+}
+
+function renderSortItems(container, itemsArray) {
+    container.innerHTML = '';
+    currentSortOrder.forEach((originalIndex, viewIndex) => {
+        const item = document.createElement('div');
+        item.className = 'sort-item';
+        item.innerHTML = `
+            <span>${itemsArray[originalIndex]}</span>
+            <div class="sort-btn-group">
+                <button onclick="moveSort(${viewIndex}, -1); event.stopPropagation();">▲</button>
+                <button onclick="moveSort(${viewIndex}, 1); event.stopPropagation();">▼</button>
+            </div>
+        `;
+        container.appendChild(item);
+    });
+}
+
+function moveSort(viewIndex, direction) {
+    const targetIndex = viewIndex + direction;
+    if (targetIndex < 0 || targetIndex >= currentSortOrder.length) return;
+    const temp = currentSortOrder[viewIndex];
+    currentSortOrder[viewIndex] = currentSortOrder[targetIndex];
+    currentSortOrder[targetIndex] = temp;
+
+    const container = document.getElementById('sortContainer');
+    renderSortItems(container, levelsData[currentIndex].items);
+}
+
+function selectMatchSide(side, index) {
+    const data = levelsData[currentIndex];
+
+    if (side === 'left') {
+        if (document.getElementById(`match-left-${index}`).classList.contains('paired')) return;
+        document.querySelectorAll('[id^="match-left-"]').forEach(el => el.classList.remove('active'));
+        selectedLeftIndex = index;
+        document.getElementById(`match-left-${index}`).classList.add('active');
+    } else {
+        if (document.getElementById(`match-right-${index}`).classList.contains('paired')) return;
+        document.querySelectorAll('[id^="match-right-"]').forEach(el => el.classList.remove('active'));
+        selectedRightIndex = index;
+        document.getElementById(`match-right-${index}`).classList.add('active');
+    }
+
+    if (selectedLeftIndex !== null && selectedRightIndex !== null) {
+        const expectedRight = data.pairs[selectedLeftIndex];
+        if (selectedRightIndex === expectedRight) {
+            pairedMatches[selectedLeftIndex] = selectedRightIndex;
+            document.getElementById(`match-left-${selectedLeftIndex}`).className = 'match-item paired';
+            document.getElementById(`match-right-${selectedRightIndex}`).className = 'match-item paired';
+            selectedLeftIndex = null;
+            selectedRightIndex = null;
+
+            if (Object.keys(pairedMatches).length === data.left.length) {
+                document.getElementById('feedback').innerHTML = '<span class="correct">✨ 完美配對！請按下驗證上傳情報。</span>';
+            }
+        } else {
+            document.getElementById('feedback').innerHTML = `<span class="wrong">❌ 這組配對不正確。</span><br><span style="font-size:0.95rem; color:#fde047;">${data.explain}</span>`;
+            document.getElementById(`match-left-${selectedLeftIndex}`).classList.remove('active');
+            document.getElementById(`match-right-${selectedRightIndex}`).classList.remove('active');
+            selectedLeftIndex = null;
+            selectedRightIndex = null;
+        }
+    }
+}
+
+function checkAnswer(type, data) {
+    if (type === 'choice') {
+        const sel = document.querySelector('#questionZone .option-card.selected');
+        if (!sel) {
+            alert('請先選擇一個答案！');
+            return null;
+        }
+        return parseInt(sel.dataset.val) === data.answer;
+    }
+
+    if (type === 'input') {
+        const field = document.getElementById('textAnswerField');
+        if (!field) return null;
+        const raw = field.value.trim().replace('公分', '').replace('cm', '').replace(',', '.');
+        if (raw === '') {
+            alert('請先輸入答案！');
+            return null;
+        }
+        const userNum = Number(raw);
+        const correctNum = Number(data.answer);
+        if (Number.isNaN(userNum)) {
+            alert('請輸入數字答案，例如 18.84');
+            return null;
+        }
+        return Math.abs(userNum - correctNum) <= 0.01;
+    }
+
+    if (type === 'sort') {
+        return currentSortOrder.every((val, index) => val === data.answer[index]);
+    }
+
+    if (type === 'match') {
+        return Object.keys(pairedMatches).length === data.left.length;
+    }
+
+    if (type === 'multi') {
+        let correctCount = 0;
+        const details = [];
+        for (let i = 0; i < data.questions.length; i++) {
+            const q = data.questions[i];
+            let correct = false;
+            let userDisplay = '';
+
+            if (q.kind === 'input') {
+                const field = document.getElementById(`multi-input-${i}`);
+                const raw = field ? field.value.trim().replace('公分', '').replace('cm', '').replace(',', '.') : '';
+                if (raw === '') {
+                    alert(`第 ${i + 1} 題尚未作答！`);
+                    return null;
+                }
+                const userNum = Number(raw);
+                if (Number.isNaN(userNum)) {
+                    alert(`第 ${i + 1} 題請輸入數字答案。`);
+                    return null;
+                }
+                correct = Math.abs(userNum - Number(q.answer)) <= 0.01;
+                userDisplay = raw;
+            } else if (q.kind === 'choice') {
+                const selected = document.querySelector(`.multi-option[data-q="${i}"].selected`);
+                if (!selected) {
+                    alert(`第 ${i + 1} 題尚未選擇答案！`);
+                    return null;
+                }
+                const userAns = parseInt(selected.dataset.val);
+                correct = userAns === q.answer;
+                userDisplay = q.options[userAns];
+            }
+
+            if (correct) correctCount++;
+            details.push({ correct, userDisplay, explain: q.explain });
+        }
+        lastMultiResult = { correct: correctCount, total: data.questions.length, details };
+        return correctCount === data.questions.length;
+    }
+
+    return false;
+}
+
+function processAnswer() {
+    const level = levelsData[currentIndex];
+    const data = isRemedialMode ? level.remedials[remedialStep] : level;
+    const type = data.type;
+
+    const isCorrect = checkAnswer(type, data);
+    if (isCorrect === null) return;
+
+    if (!isRemedialMode && type === 'multi') {
+        const result = lastMultiResult || {correct: 0, total: level.questions.length, details: []};
+        const levelScore = result.correct * 4;
+        const missed = result.total - result.correct;
+        stats.integrationCorrect = result.correct;
+        stats.integrationTotal = result.total;
+        stats.integrationScore = levelScore;
+        if (missed > 0) {
+            score -= missed * 3;
+            stats.mainWrong += missed;
+            stats.wrongTopics.push(topicNames[currentIndex]);
+        }
+        const detailHtml = result.details.map((d, idx) => {
+            const mark = d.correct ? '✅' : '❌';
+            const color = d.correct ? '#d1fae5' : '#fde047';
+            return `${mark} 第 ${idx + 1} 題：${d.correct ? '答對' : '答錯'}<br><span style="color:${color}; font-size:0.95rem;">${d.explain}</span>`;
+        }).join('<br><br>');
+        document.getElementById('feedback').innerHTML =
+            `<div class="integration-result"><b>第 9 關整合應用得分：${levelScore} / 20 分</b><br><br>${detailHtml}</div>`;
+        document.getElementById('submitBtn').disabled = true;
+        setTimeout(advanceLevel, 4500);
+        return;
+    }
+
+    if (isCorrect) {
+        if (isRemedialMode) {
+            stats.remedialPassed++;
+            document.getElementById('feedback').innerHTML =
+                `<span class="correct">✅ 補訓通過！你已修正本關觀念。</span><br><span style="font-size:0.95rem; color:#d1fae5;">${data.explain}</span>`;
+        } else {
+            document.getElementById('feedback').innerHTML =
+                `<span class="correct">🎉 驗證成功！</span><br><span style="font-size:0.95rem; color:#d1fae5;">${level.explain}</span>`;
+        }
+        document.getElementById('submitBtn').disabled = true;
+        setTimeout(advanceLevel, 1800);
+        return;
+    }
+
+    if (!isRemedialMode) {
+        score -= 2;
+        stats.mainWrong++;
+        stats.wrongTopics.push(topicNames[currentIndex]);
+        document.getElementById('feedback').innerHTML =
+            `<span class="wrong">❌ 答錯了，先看方法再補訓。</span><br><span style="font-size:0.98rem; color:#fde047;">${level.explain}</span>`;
+        isRemedialMode = true;
+        remedialStep = 0;
+        document.getElementById('submitBtn').disabled = true;
+        setTimeout(loadLevel, 2500);
+    } else {
+        score -= 3;
+        stats.remedialWrong++;
+        document.getElementById('feedback').innerHTML =
+            `<span class="wrong">❌ 補訓答錯。</span><br><span style="font-size:0.98rem; color:#fde047;">${data.explain}</span>`;
+
+        remedialStep++;
+        document.getElementById('submitBtn').disabled = true;
+
+        if (remedialStep >= 3) {
+            stats.exhaustedLevels.push(currentIndex + 1);
+            setTimeout(() => {
+                document.getElementById('feedback').innerHTML =
+                    `<span class="wrong">⚠️ 本關補訓已達 3 次上限，系統會記錄為需加強，並帶你進入下一關。</span>`;
+                setTimeout(advanceLevel, 1500);
+            }, 1800);
+        } else {
+            setTimeout(loadLevel, 2500);
+        }
+    }
+}
+
+function advanceLevel() {
+    isRemedialMode = false;
+    remedialStep = 0;
+    currentIndex++;
+
+    if (currentIndex < levelsData.length) {
+        loadLevel();
+    } else {
+        startBossStage();
+    }
+}
+
+function startBossStage() {
+    document.getElementById('gameScreen').classList.add('hidden');
+    document.getElementById('bossScreen').classList.remove('hidden');
+    currentBossIndex = 0;
+    loadBossQuestion();
+}
+
+function loadBossQuestion() {
+    bossSelectedOption = null;
+    document.getElementById('bossFeedback').innerHTML = '';
+    const qData = bossQuestions[currentBossIndex];
+    document.getElementById('bossProgressText').innerText = `魔王題組：${currentBossIndex + 1} / ${bossQuestions.length}`;
+
+    const zone = document.getElementById('bossQuestionZone');
+    zone.innerHTML = `<p style="font-size:1.2rem; line-height:1.6; font-weight:bold; margin-bottom:20px;">${qData.question}</p>`;
+
+    const grid = document.createElement('div');
+    grid.className = 'option-grid';
+    qData.options.forEach((opt, idx) => {
+        const card = document.createElement('div');
+        card.className = 'option-card';
+        card.innerText = opt;
+        card.id = `boss-opt-${idx}`;
+        card.onclick = () => {
+            document.querySelectorAll('#bossQuestionZone .option-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            bossSelectedOption = idx;
+        };
+        grid.appendChild(card);
+    });
+    zone.appendChild(grid);
+}
+
+function processBossAnswer() {
+    if (bossSelectedOption === null) {
+        alert('請選取一個答案！');
+        return;
+    }
+
+    const qData = bossQuestions[currentBossIndex];
+    if (bossSelectedOption === qData.answer) {
+        document.getElementById('bossFeedback').innerHTML =
+            `<span class="correct">💥 命中核心！</span><br><span style="font-size:0.95rem; color:#d1fae5;">${qData.explain}</span>`;
+        setTimeout(() => {
+            currentBossIndex++;
+            if (currentBossIndex < bossQuestions.length) {
+                loadBossQuestion();
+            } else {
+                endGame();
+            }
+        }, 1600);
+    } else {
+        score -= 4;
+        stats.bossWrong++;
+        document.getElementById('bossFeedback').innerHTML =
+            `<span class="wrong">⚡ 答錯了，立即修正觀念。</span><br><span style="font-size:0.95rem; color:#fde047;">${qData.explain}</span>`;
+        setTimeout(() => { loadBossQuestion(); }, 2200);
+    }
+}
+
+function uniqueArray(arr) {
+    return [...new Set(arr)];
+}
+
+function endGame() {
+    document.getElementById('bossScreen').classList.add('hidden');
+    document.getElementById('endScreen').classList.remove('hidden');
+
+    if (score < 0) score = 0;
+    document.getElementById('finalScoreText').innerText = score;
+
+    let rank = '';
+    let eval = '';
+
+    const weakTopics = uniqueArray(stats.wrongTopics);
+    const weakText = weakTopics.length ? weakTopics.join('、') : '沒有明顯弱點，基礎觀念掌握穩定';
+    const exhaustedText = stats.exhaustedLevels.length ? `第 ${stats.exhaustedLevels.join('、')} 關補訓達上限，建議回頭複習。` : '所有補訓皆未超過 3 次上限。';
+
+    if (score >= 90) {
+        rank = '👑 A級 幾何王牌特務';
+        eval = `你的圓周率、圓周長與扇形周長概念很穩定。主線錯誤 ${stats.mainWrong} 次、補訓錯誤 ${stats.remedialWrong} 次、魔王關錯誤 ${stats.bossWrong} 次。建議挑戰更複雜的複合題，例如同時求弧長與周長。`;
+    } else if (score >= 75) {
+        rank = '🏅 B級 穩定成長特務';
+        eval = `你能完成任務，但部分題型需要再練習。主線錯誤 ${stats.mainWrong} 次、補訓通過 ${stats.remedialPassed} 次。需加強主題：${weakText}。建議先熟記「圓周長 = 直徑 × 3.14」與「扇形周長 = 2 條半徑 + 弧長」。`;
+    } else if (score >= 60) {
+        rank = '⚡ C級 補訓通過特務';
+        eval = `你在補訓中有努力修正，但計算步驟仍容易漏掉。主線錯誤 ${stats.mainWrong} 次、補訓錯誤 ${stats.remedialWrong} 次。${exhaustedText} 下次作答前請先寫下列式，再計算答案。`;
+    } else {
+        rank = '📘 D級 需要再補強學員';
+        eval = `目前需要回到基本定義重新整理。需加強主題：${weakText}。${exhaustedText} 建議從三件事開始：① 圓周率 = 圓周長 ÷ 直徑；② 圓周長 = 直徑 × 3.14；③ 扇形周長 = 2 條半徑 + 弧長。`;
+    }
+
+    const report = `
+        <b>學習表現統計：</b><br>
+        主線答錯：${stats.mainWrong} 次<br>
+        補訓答錯：${stats.remedialWrong} 次<br>
+        補訓通過：${stats.remedialPassed} 次<br>
+        魔王關答錯：${stats.bossWrong} 次<br>
+        第 9 關整合應用：${stats.integrationScore} / 20 分（答對 ${stats.integrationCorrect} / ${stats.integrationTotal} 題）<br>
+        <br>
+        <b>學習回饋：</b><br>${eval}
+    `;
+
+    document.getElementById('finalRank').innerText = rank;
+    document.getElementById('evalContent').innerHTML = report;
+}
+
+init();
+</script>
+
+</body>
+</html>
