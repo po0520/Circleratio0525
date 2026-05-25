@@ -381,7 +381,7 @@ input[type="text"]:focus {
             <b>🎮 闖關特務規則：</b><br>
             1. 包含 9 大核心關卡，題型涵蓋填空、配對、排序、選擇與整合應用題。<br>
             2. 答錯將驚動敵軍，並<b>強制進入原廠補救特訓</b>。<br>
-            3. <span style="color:var(--accent-gold); font-weight:bold;">【全新防禦升級】每一個關卡都擁有獨立且最多 3 次的補訓機會！</span>不會跨關卡共用。<br>
+            3. <span style="color:var(--accent-gold); font-weight:bold;">【全新防禦升級】每一個關卡都擁有獨立且最多 6 次的補訓機會！</span>不會跨關卡共用。<br>
             4. 第 9 關會一次出 5 題整合應用題，並計算本關 20 分制得分。<br>
             5. 通過主線後，將解鎖<b>「終極魔王關」</b>（5 題四選一綜合死鬥）。<br>
             5. 最終依據你的表現，給予殘酷的特務排行榜評級與情緒評價！
@@ -470,7 +470,7 @@ input[type="text"]:focus {
   1. 每一關先提供「定義或計算方法」引導。
   2. 主線答錯：立即回饋正確觀念或算式，並進入補訓。
   3. 補訓答錯：立即回饋計算方法，接著更換數字給下一題。
-  4. 每關補訓最多 3 次；用完仍未通過會進入下一關，最後在成績報告列為需加強。
+  4. 每關補訓最多 6 次；前 3 次會依序出現 3 題補訓題，若都答錯，3 題會各再出現 1 次。用完仍未通過會進入下一關，最後在成績報告列為需加強。
   5. 第 9 關整合前 8 關內容，出 5 題應用問題並計算本關分數。
   6. 最後依主線、補訓、第 9 關與魔王關表現計算成績並給學習建議。
 */
@@ -515,12 +515,12 @@ const levelsData = [
         type: "sort",
         question: "請將解碼步驟由上至下正確排序：",
         items: [
-            "步驟 A：31.4 ÷ 3.14，先求直徑",
-            "步驟 B：算出直徑是 10 公分",
-            "步驟 C：10 ÷ 2，求半徑",
-            "步驟 D：半徑是 5 公分"
+            "步驟 A：算出直徑是 10 公分",
+            "步驟 B：31.4 ÷ 3.14，先求直徑",
+            "步驟 C：半徑是 5 公分",
+            "步驟 D：10 ÷ 2，求半徑"
         ],
-        answer: [0, 1, 2, 3],
+        answer: [1, 0, 3, 2],
         explain: "逆推順序是：圓周長 ÷ 3.14 = 直徑；直徑 ÷ 2 = 半徑。因此 31.4 ÷ 3.14 = 10，10 ÷ 2 = 5。",
         remedials: [
             {type:"input", question:"補訓題 1：已知圓周長 62.8 公分，半徑是多少公分？", answer:10, explain:"先求直徑：62.8 ÷ 3.14 = 20；再求半徑：20 ÷ 2 = 10。"},
@@ -662,6 +662,8 @@ let currentIndex = 0;
 let score = 100;
 let isRemedialMode = false;
 let remedialStep = 0;
+const REMEDIAL_UNIQUE_COUNT = 3;
+const REMEDIAL_MAX_ATTEMPTS = 6;
 let currentSortOrder = [];
 let selectedLeftIndex = null;
 let selectedRightIndex = null;
@@ -717,6 +719,9 @@ function resetStats() {
         remedialWrong: 0,
         bossWrong: 0,
         remedialPassed: 0,
+        integrationCorrect: 0,
+        integrationTotal: 0,
+        integrationScore: 0,
         exhaustedLevels: [],
         wrongTopics: []
     };
@@ -755,12 +760,14 @@ function loadLevel() {
         document.getElementById('lvlGuide').innerHTML = data.method;
         renderInteractiveZone(data.type, data.question, data);
     } else {
-        const r = data.remedials[remedialStep];
-        document.getElementById('retryIndicator').innerText = `🚨 補訓進度：${remedialStep + 1} / 3`;
+        const remedialIndex = remedialStep % REMEDIAL_UNIQUE_COUNT;
+        const roundText = remedialStep < REMEDIAL_UNIQUE_COUNT ? '第一輪' : '第二輪複習';
+        const r = data.remedials[remedialIndex];
+        document.getElementById('retryIndicator').innerText = `🚨 補訓進度：${remedialStep + 1} / ${REMEDIAL_MAX_ATTEMPTS}（${roundText}・題 ${remedialIndex + 1}）`;
         document.getElementById('retryIndicator').style.color = '#ef4444';
         document.getElementById('lvlTitle').innerText = `🚨 第 ${currentIndex + 1} 關補救特訓`;
         document.getElementById('lvlChar').innerText = "WISE 補訓系統";
-        document.getElementById('lvlStory').innerText = "剛剛的答案有誤，系統會先給你方法，再用改過數字的例題練習。答對即可返回主線並前進下一關。";
+        document.getElementById('lvlStory').innerText = "剛剛的答案有誤，系統會先給你方法，再用改過數字的例題練習。共有 3 題補訓題；若第一輪都答錯，3 題會各再出現 1 次。答對即可返回主線並前進下一關。";
         document.getElementById('lvlGuide').innerHTML = `💡 補訓提示：${data.explain}`;
         renderInteractiveZone(r.type, r.question, r, true);
     }
@@ -1016,7 +1023,7 @@ function checkAnswer(type, data) {
 
 function processAnswer() {
     const level = levelsData[currentIndex];
-    const data = isRemedialMode ? level.remedials[remedialStep] : level;
+    const data = isRemedialMode ? level.remedials[remedialStep % REMEDIAL_UNIQUE_COUNT] : level;
     const type = data.type;
 
     const isCorrect = checkAnswer(type, data);
@@ -1079,15 +1086,19 @@ function processAnswer() {
         remedialStep++;
         document.getElementById('submitBtn').disabled = true;
 
-        if (remedialStep >= 3) {
+        if (remedialStep >= REMEDIAL_MAX_ATTEMPTS) {
             stats.exhaustedLevels.push(currentIndex + 1);
             setTimeout(() => {
                 document.getElementById('feedback').innerHTML =
-                    `<span class="wrong">⚠️ 本關補訓已達 3 次上限，系統會記錄為需加強，並帶你進入下一關。</span>`;
+                    `<span class="wrong">⚠️ 本關補訓已達 ${REMEDIAL_MAX_ATTEMPTS} 次上限，3 題補訓都已複習 2 輪。系統會記錄為需加強，並帶你進入下一關。</span>`;
                 setTimeout(advanceLevel, 1500);
             }, 1800);
         } else {
-            setTimeout(loadLevel, 2500);
+            const nextRound = remedialStep < REMEDIAL_UNIQUE_COUNT ? '下一題補訓' : '第二輪複習題';
+            setTimeout(() => {
+                document.getElementById('feedback').innerHTML += `<br><span style="font-size:0.95rem; color:#d1d5db;">即將進入${nextRound}，剩餘 ${REMEDIAL_MAX_ATTEMPTS - remedialStep} 次機會。</span>`;
+                setTimeout(loadLevel, 900);
+            }, 1700);
         }
     }
 }
@@ -1180,7 +1191,7 @@ function endGame() {
 
     const weakTopics = uniqueArray(stats.wrongTopics);
     const weakText = weakTopics.length ? weakTopics.join('、') : '沒有明顯弱點，基礎觀念掌握穩定';
-    const exhaustedText = stats.exhaustedLevels.length ? `第 ${stats.exhaustedLevels.join('、')} 關補訓達上限，建議回頭複習。` : '所有補訓皆未超過 3 次上限。';
+    const exhaustedText = stats.exhaustedLevels.length ? `第 ${stats.exhaustedLevels.join('、')} 關補訓達 6 次上限，建議回頭複習。` : '所有補訓皆未超過 6 次上限。';
 
     if (score >= 90) {
         rank = '👑 A級 幾何王牌特務';
